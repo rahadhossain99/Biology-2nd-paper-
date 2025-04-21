@@ -1,0 +1,1333 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HSC Biology Syllabus Dashboard - Fahad Sir</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Poppins:wght@400;500;600&display=swap');
+
+        :root {
+            --primary-color: #3498db; /* Slightly softer Blue */
+            --secondary-color: #2ecc71; /* Vibrant Green */
+            --accent-color: #f39c12; /* Engaging Orange */
+            --background-color: #f4f7f9; /* Very Light Grey */
+            --card-bg: #ffffff;
+            --text-color: #4a4a4a; /* Dark Grey */
+            --heading-color: #2c3e50; /* Dark Navy-Grey */
+            --link-color: var(--primary-color);
+            --placeholder-color: #9b9b9b; /* Light Grey */
+            --border-color: #e1e8ed; /* Soft Border */
+            --danger-color: #e74c3c; /* Red for delete/error */
+            --shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+            --shadow-hover: 0 10px 30px rgba(52, 152, 219, 0.25); /* Blue-tinted hover shadow */
+            --shadow-inset: inset 0 2px 4px rgba(0,0,0,0.06);
+            --border-radius: 12px;
+            --transition-speed: 0.3s;
+            --font-bengali: 'Hind Siliguri', sans-serif;
+            --font-english: 'Poppins', sans-serif;
+        }
+
+        /* General Styles */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; font-size: 16px; }
+        body {
+            font-family: var(--font-bengali);
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.7;
+            padding: 50px 0 60px 0; /* No horizontal padding here */
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        .container { max-width: 1400px; margin: 0 auto; padding: 0 30px; }
+
+        /* Headings */
+        .main-heading {
+            text-align: center; color: var(--heading-color); margin-bottom: 60px;
+            font-size: 2.8rem; font-weight: 700; position: relative; padding-bottom: 20px;
+            animation: slideInDown 1s ease-out;
+        }
+        .main-heading::after {
+            content: ''; position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
+            width: 100px; height: 5px; background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            border-radius: 3px;
+        }
+        .section-heading { /* For "Additional Resources" heading */
+            font-size: 1.5rem; font-weight: 600; color: var(--heading-color);
+            margin-top: 35px; margin-bottom: 20px; padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color); display: flex; align-items: center; gap: 10px;
+        }
+         .section-heading svg { width: 22px; height: 22px; fill: var(--accent-color); }
+
+
+        /* Layout Grid */
+        .syllabus-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 600px), 1fr));
+            gap: 40px;
+        }
+
+        /* Paper Section Card */
+        .paper-section {
+            background-color: var(--card-bg); border-radius: var(--border-radius); box-shadow: var(--shadow);
+            padding: 35px; transition: transform var(--transition-speed) ease, box-shadow var(--transition-speed) ease;
+            animation: zoomIn 0.8s ease-out forwards; opacity: 0;
+            animation-delay: calc(var(--section-index) * 0.15s + 0.4s);
+            border-top: 6px solid var(--primary-color); position: relative; overflow: hidden;
+        }
+        .paper-section:nth-child(even) { border-top-color: var(--secondary-color); }
+        .paper-section:hover { transform: translateY(-8px) scale(1.015); box-shadow: var(--shadow-hover); }
+
+        /* Paper Title */
+        .paper-title {
+            color: var(--heading-color); font-size: 2rem; font-weight: 600; margin-bottom: 30px;
+            border-bottom: 1px solid var(--border-color); padding-bottom: 15px;
+            display: flex; align-items: center; gap: 12px;
+        }
+         .paper-title svg { width: 30px; height: 30px; fill: var(--primary-color); flex-shrink: 0; }
+         .paper-section:nth-child(even) .paper-title svg { fill: var(--secondary-color); }
+
+        /* Chapter List */
+        .chapter-list, .resource-list { list-style: none; padding: 0; margin: 0; }
+        .chapter-item, .resource-item {
+            padding: 18px 15px; border-bottom: 1px dashed #dbe4eb;
+            transition: background-color var(--transition-speed) ease, transform var(--transition-speed) ease;
+            animation: fadeInRight 0.5s ease-out forwards; opacity: 0;
+            animation-delay: calc(var(--item-index) * 0.05s + 0.7s);
+            position: relative; overflow: hidden; border-radius: 8px; margin-bottom: 8px;
+        }
+        .chapter-item:last-child, .resource-item:last-child { border-bottom: none; margin-bottom: 0; }
+        .chapter-item:hover, .resource-item:hover {
+            background-color: rgba(52, 152, 219, 0.04); /* Primary color tint */
+            transform: translateX(4px);
+        }
+
+        /* Content Area (Chapter/Resource) */
+        .item-content { /* Replaces chapter-content */
+            display: flex; justify-content: space-between; align-items: center;
+            gap: 15px; flex-wrap: wrap;
+        }
+        .item-info { /* Replaces chapter-info */
+            display: flex; align-items: center; gap: 15px;
+            flex-grow: 1; min-width: 250px;
+        }
+
+        /* Chapter Specifics */
+        .chapter-number {
+            font-weight: 700; color: var(--primary-color); font-size: 1.1rem;
+            flex-shrink: 0; width: 30px; text-align: right; font-family: var(--font-english);
+        }
+        .paper-section:nth-child(even) .chapter-number { color: var(--secondary-color); }
+        .chapter-name {
+            font-size: 1.1rem; font-weight: 500; color: var(--text-color); flex-grow: 1;
+            transition: color var(--transition-speed) ease;
+        }
+        .chapter-item:hover .chapter-name { color: var(--heading-color); font-weight: 600; }
+
+        /* Resource Specifics */
+        .resource-icon { /* Icon for resource item */
+            flex-shrink: 0; width: 24px; height: 24px; fill: var(--accent-color); opacity: 0.8;
+        }
+        .resource-title {
+            font-size: 1.05rem; font-weight: 500; color: var(--text-color); flex-grow: 1;
+            transition: color var(--transition-speed) ease;
+        }
+        .resource-item:hover .resource-title { color: var(--heading-color); font-weight: 600; }
+
+
+        /* Link Area (Buttons) */
+        .link-area { flex-shrink: 0; display: flex; gap: 10px; align-items: center; }
+
+        /* Buttons */
+        .btn {
+            padding: 8px 18px; border: none; border-radius: 25px; font-family: var(--font-bengali);
+            font-size: 0.9rem; font-weight: 600; cursor: pointer;
+            transition: all var(--transition-speed) ease; text-decoration: none;
+            display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+            white-space: nowrap; line-height: 1.4; border: 1.5px solid transparent;
+        }
+        .btn svg { width: 16px; height: 16px; fill: currentColor; margin-bottom: -2px; }
+
+        .btn-watch { /* For Chapter Playlist */
+            background: linear-gradient(135deg, var(--secondary-color), #27ae60); /* Green */
+            color: #fff; box-shadow: 0 4px 12px rgba(46, 204, 113, 0.3);
+        }
+        .btn-watch:hover {
+            background: linear-gradient(135deg, #2abd68, #239a55);
+            transform: translateY(-3px) scale(1.03); box-shadow: 0 7px 18px rgba(46, 204, 113, 0.4);
+        }
+
+        .btn-open { /* For Resource Link (Video/Other) */
+            background: linear-gradient(135deg, var(--primary-color), #2980b9); /* Blue */
+            color: #fff; box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+        }
+        .btn-open:hover {
+            background: linear-gradient(135deg, #2a8cd6, #2173a6);
+            transform: translateY(-3px) scale(1.03); box-shadow: 0 7px 18px rgba(52, 152, 219, 0.4);
+        }
+
+
+        .btn-add-link { /* Add chapter playlist */
+            background-color: transparent; color: var(--placeholder-color);
+            border: 1.5px dashed var(--placeholder-color);
+        }
+         .btn-add-link:hover {
+            background-color: rgba(155, 155, 155, 0.06); color: var(--text-color); border-style: solid;
+         }
+
+        .btn-edit { /* Edit Chapter or Resource */
+            background-color: transparent; color: var(--accent-color);
+            border: 1.5px solid var(--accent-color);
+        }
+         .btn-edit:hover {
+             background-color: rgba(243, 156, 18, 0.08); color: #d38d0f;
+             transform: translateY(-2px) scale(1.02); border-color: #e09921;
+         }
+
+        .btn-delete { /* Delete Resource */
+             background-color: transparent; color: var(--danger-color);
+             border: 1.5px solid var(--danger-color); padding: 8px 12px; /* Slightly smaller */
+         }
+         .btn-delete svg { width: 14px; height: 14px;}
+         .btn-delete:hover {
+             background-color: rgba(231, 76, 60, 0.08); color: #c0392b;
+             transform: translateY(-2px) scale(1.02); border-color: #d65041;
+         }
+
+        .btn-add-resource { /* Add New Resource Button */
+            background-color: var(--accent-color); color: white;
+            box-shadow: 0 4px 12px rgba(243, 156, 18, 0.25);
+            margin-top: 15px; display: block; /* Make it full width within its container */
+            width: 100%; max-width: 300px; /* Limit max width */
+            margin-left: auto; margin-right: auto; /* Center it */
+        }
+        .btn-add-resource:hover {
+             background-color: #e08e0b; transform: translateY(-3px) scale(1.03);
+             box-shadow: 0 7px 18px rgba(243, 156, 18, 0.35);
+        }
+
+        .btn-save { /* Save Edit */
+             background: linear-gradient(135deg, var(--primary-color), #2980b9); color: white;
+             box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+        }
+        .btn-save:hover {
+             background: linear-gradient(135deg, #2a8cd6, #2173a6);
+             transform: translateY(-3px) scale(1.03); box-shadow: 0 7px 18px rgba(52, 152, 219, 0.4);
+        }
+         .btn-cancel { /* Cancel Edit */
+             background-color: #f1f3f5; color: var(--text-color); border: 1.5px solid #dee2e6;
+         }
+         .btn-cancel:hover { background-color: #e9ecef; transform: translateY(-2px); border-color: #ced4da; }
+
+        /* Edit Mode Styles (Common for Chapter & Resource) */
+        .edit-mode {
+            display: none; padding: 20px 15px 15px 15px; margin-top: 15px;
+            background-color: #fdfdff; border: 1px solid var(--border-color);
+            border-radius: var(--border-radius); box-shadow: var(--shadow-inset);
+            animation: slideFadeIn 0.4s ease-out;
+        }
+        .edit-fields { display: flex; flex-direction: column; gap: 15px; margin-bottom: 20px; }
+        .edit-fields label {
+            font-weight: 600; font-size: 0.95rem; color: var(--heading-color);
+            margin-bottom: -8px; display: block;
+        }
+        .edit-fields input[type="text"], .edit-fields input[type="url"] {
+             width: 100%; padding: 10px 15px; border: 1px solid #ced4da; border-radius: 8px;
+             font-family: var(--font-bengali); font-size: 1rem;
+             transition: border-color var(--transition-speed) ease, box-shadow var(--transition-speed) ease;
+             background-color: #fff; box-shadow: none;
+        }
+        .edit-fields input[type="text"]:focus, .edit-fields input[type="url"]:focus {
+             outline: none; border-color: var(--primary-color);
+             box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+        .edit-fields input::placeholder { color: var(--placeholder-color); opacity: 0.8; font-size: 0.95rem; }
+        .edit-fields input.input-error {
+             border-color: var(--danger-color) !important;
+             box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.1) !important;
+        }
+        .edit-actions { display: flex; justify-content: flex-end; gap: 10px; }
+
+        /* Additional Resources Section */
+        .additional-resources-section {
+            margin-top: 40px; padding-top: 25px;
+            border-top: 2px solid var(--primary-color);
+            background-color: #fcfdff; /* Slightly different background */
+            padding: 25px;
+            border-radius: 0 0 var(--border-radius) var(--border-radius); /* Round bottom corners */
+            margin: 40px -35px -35px -35px; /* Extend to edges of parent padding */
+        }
+         .paper-section:nth-child(even) .additional-resources-section {
+            border-top-color: var(--secondary-color);
+        }
+        .additional-resources-section .resource-list { margin-top: 10px; }
+
+
+        /* Modal Styles (Remain mostly the same) */
+        .modal {
+            display: none; position: fixed; z-index: 1050; left: 0; top: 0; width: 100%; height: 100%;
+            overflow: hidden; background-color: rgba(0, 0, 0, 0.85); /* Darker overlay */
+            animation: fadeIn var(--transition-speed) ease; backdrop-filter: blur(6px); /* Slightly more blur */
+        }
+        .modal-content {
+            position: relative; margin: 3% auto; padding: 0; width: 90%; max-width: 960px;
+            background-color: var(--card-bg); box-shadow: 0 10px 40px rgba(0, 0, 0, 0.35);
+            border-radius: var(--border-radius); animation: slideDown 0.5s ease-out;
+            overflow: hidden; border-top: 6px solid var(--primary-color);
+        }
+         .modal-header {
+             padding: 15px 25px; border-bottom: 1px solid var(--border-color);
+             display: flex; justify-content: space-between; align-items: center;
+             background-color: #fcfdff; color: var(--heading-color);
+         }
+        .modal-title { font-size: 1.5rem; font-weight: 600; line-height: 1.4; }
+        .close-button {
+            color: #999; font-size: 36px; font-weight: bold; cursor: pointer;
+            transition: color 0.2s ease, transform 0.2s ease; padding: 0 8px; line-height: 1;
+            background: none; border: none;
+        }
+        .close-button:hover, .close-button:focus {
+            color: #444; transform: rotate(90deg) scale(1.1); text-decoration: none; outline: none;
+        }
+        .modal-body {
+            padding: 0; position: relative; padding-bottom: 56.25%; height: 0;
+            overflow: hidden; background-color: #000;
+        }
+        #youtube-player-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
+        #youtube-player-container iframe { width: 100%; height: 100%; display: block; }
+        .player-message {
+            display: flex; justify-content: center; align-items: center; height: 100%;
+            position: absolute; top: 0; left: 0; right: 0; bottom: 0; color: #ccc;
+            font-size: 1.1rem; text-align: center; padding: 20px; background-color: #111;
+        }
+        .player-message.error { color: orange; }
+
+
+        /* Status Messages & Loading */
+         #status-area {
+             position: fixed; top: 15px; left: 50%; transform: translateX(-50%);
+             z-index: 2000; width: auto; min-width: 280px; max-width: 550px; pointer-events: none;
+         }
+        .status-message {
+            text-align: center; padding: 15px 22px; margin-bottom: 12px; border-radius: 8px;
+            font-weight: 500; font-size: 1rem; animation: fadeInDown 0.4s ease-out forwards;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.12); border: 1px solid transparent; color: #fff;
+            opacity: 0; background-color: rgba(50, 50, 50, 0.9); pointer-events: auto;
+        }
+        .status-success { background-color: rgba(46, 204, 113, 0.95); border-color: rgba(39, 174, 96, 0.8); }
+         .status-error { background-color: rgba(231, 76, 60, 0.95); border-color: rgba(192, 57, 43, 0.8); }
+         .status-info { background-color: rgba(52, 152, 219, 0.95); border-color: rgba(41, 128, 185, 0.8); }
+
+        /* Loading placeholder */
+        .loading-placeholder {
+            text-align: center; grid-column: 1 / -1; font-size: 1.2rem; padding: 60px 0;
+            color: var(--placeholder-color); display: flex; justify-content: center; align-items: center; gap: 10px;
+        }
+        .spinner {
+            width: 24px; height: 24px; border: 3px solid rgba(52, 152, 219, 0.2);
+            border-top-color: var(--primary-color); border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* Animations */
+        @keyframes fadeInDown { from { opacity: 0; transform: translate(-50%, -25px); } to { opacity: 1; transform: translate(-50%, 0); } }
+        @keyframes fadeOutUp { from { opacity: 1; transform: translate(-50%, 0); } to { opacity: 0; transform: translate(-50%, -25px); } }
+        @keyframes slideInDown { from { opacity: 0; transform: translateY(-30px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes zoomIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+        @keyframes fadeInRight { from { opacity: 0; transform: translateX(30px); } to { opacity: 1; transform: translateX(0); } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-30px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideFadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Helper class */
+        .hidden { display: none !important; }
+
+        /* Responsive Design */
+        @media (max-width: 1200px) { .container { max-width: 1100px; } .main-heading { font-size: 2.6rem; } .paper-title { font-size: 1.9rem; } }
+        @media (max-width: 992px) {
+             .container { max-width: 900px; padding: 0 25px; } .main-heading { font-size: 2.4rem; margin-bottom: 50px; }
+             .paper-title { font-size: 1.7rem; } .paper-section { padding: 30px; }
+             .syllabus-grid { grid-template-columns: 1fr; gap: 35px; }
+             .additional-resources-section { margin: 40px -30px -30px -30px; padding: 20px; }
+        }
+        @media (max-width: 768px) {
+             html { font-size: 15px; } body { padding-top: 40px; } .container { padding: 0 20px; }
+             .main-heading { font-size: 2.1rem; } .paper-title { font-size: 1.6rem; margin-bottom: 25px; }
+             .item-content { flex-direction: column; align-items: stretch; gap: 15px;}
+             .item-info { min-width: unset; }
+             .link-area { width: 100%; justify-content: flex-start; flex-wrap: wrap;}
+             .btn { padding: 9px 20px; font-size: 0.95rem; }
+             .modal-content { width: 95%; margin: 5% auto; } .modal-title { font-size: 1.3rem; }
+             .modal-header { padding: 12px 20px; }
+             #status-area { width: 90%; top: 10px; } .status-message { padding: 12px 18px; font-size: 0.95rem;}
+             .section-heading { font-size: 1.3rem; }
+             .additional-resources-section { margin: 30px -20px -20px -20px; padding: 15px; }
+        }
+         @media (max-width: 480px) {
+              html { font-size: 14px; } body { padding-top: 30px; padding-bottom: 40px; }
+              .container { padding: 0 15px; } .main-heading { font-size: 1.8rem; margin-bottom: 30px; }
+              .main-heading::after { width: 80px; height: 4px; }
+              .paper-section { padding: 20px; border-top-width: 5px;}
+              .paper-title { font-size: 1.4rem; margin-bottom: 20px; gap: 8px; }
+              .paper-title svg { width: 24px; height: 24px; }
+              .chapter-item, .resource-item { padding: 15px 12px; margin-bottom: 6px; }
+              .item-info { gap: 10px; } .chapter-number { font-size: 1rem; width: 25px; }
+              .chapter-name, .resource-title { font-size: 1rem; }
+              .btn { padding: 8px 16px; font-size: 0.85rem; gap: 5px;} .btn svg { width: 14px; height: 14px; }
+              .link-area { gap: 8px; } .modal-header { padding: 10px 15px; } .modal-title { font-size: 1.1rem; }
+              .close-button { font-size: 30px; }
+              .edit-fields input[type="text"], .edit-fields input[type="url"] { font-size: 0.95rem; padding: 9px 12px; }
+              .edit-fields label { font-size: 0.9rem; }
+              #status-area { width: 92%; top: 8px; } .status-message { padding: 10px 15px; font-size: 0.9rem; }
+              .loading-placeholder { font-size: 1.1rem; padding: 40px 0;}
+              .section-heading { font-size: 1.2rem; } .section-heading svg { width: 18px; height: 18px; }
+              .additional-resources-section { margin: 25px -15px -15px -15px; padding: 10px; }
+              .btn-add-resource { max-width: 100%; font-size: 0.9rem; padding: 10px 20px; }
+         }
+
+    </style>
+</head>
+<body>
+    <!-- Inline SVG Icons Definition -->
+    <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+        <symbol id="icon-book-open" viewBox="0 0 24 24"><path fill-rule="evenodd" clip-rule="evenodd" d="M18 2H6C4.9 2 4 2.9 4 4V20C4 21.1 4.9 22 6 22H18C19.1 22 20 21.1 20 20V4C20 2.9 19.1 2 18 2ZM6 4H11V12.5L8.5 10.5L6 12.5V4ZM18 20H6V14L8.5 12L11 14V4H18V20Z"/></symbol>
+        <symbol id="icon-flask" viewBox="0 0 24 24"><path fill-rule="evenodd" clip-rule="evenodd" d="M19.78 6.38L14.22 1.19C14.03 1.02 13.78 0.94 13.5 0.94H10.5C10.22 0.94 9.97 1.02 9.78 1.19L4.22 6.38C4.03 6.55 3.91 6.8 3.91 7.06V12.94C3.91 16.9 7.01 20.06 11 20.06H13C16.99 20.06 20.09 16.9 20.09 12.94V7.06C20.09 6.8 19.97 6.55 19.78 6.38ZM12 2.94L13 4.06V8.94H11V4.06L12 2.94ZM5.91 7.94H9V11.94H7.5C6.67 11.94 6 11.27 6 10.44L5.91 7.94ZM18.09 7.94L17.5 10.44C17.5 11.27 16.83 11.94 16 11.94H15V7.94H18.09ZM13 18.06H11C8.13 18.06 5.91 15.78 5.91 12.94V13.94H7.5C8.88 13.94 10 12.82 10 11.44V13.94H14V11.44C14 12.82 15.12 13.94 16.5 13.94H18.09V12.94C18.09 15.78 15.87 18.06 13 18.06Z"/></symbol>
+        <symbol id="icon-play" viewBox="0 0 24 24"><path d="M8 5v14l11-7L8 5z"></path></symbol> <!-- For Playlist -->
+        <symbol id="icon-video" viewBox="0 0 24 24"><path d="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z"></path></symbol> <!-- For Single Video -->
+        <symbol id="icon-link" viewBox="0 0 24 24"><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"></path></symbol> <!-- For Generic Link -->
+        <symbol id="icon-add" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"></path></symbol>
+        <symbol id="icon-edit" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34a.9959.9959 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"></path></symbol>
+        <symbol id="icon-save" viewBox="0 0 24 24"><path d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z"></path></symbol>
+        <symbol id="icon-cancel" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"></path></symbol>
+        <symbol id="icon-delete" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path></symbol>
+        <symbol id="icon-resources" viewBox="0 0 24 24"><path d="M19 18h-2v-2h2v2zm0-4h-2v-2h2v2zm0-4h-2V8h2v2zm-4 8h-2v-2h2v2zm-4 0H9v-2h2v2zm6-12V4H7v2h10zm2 12h-8v-2h6v-2h-6V8H7v6h2v2H7v2h12v-2z"/></symbol> <!-- New icon for resources section -->
+    </svg>
+
+    <div class="container">
+        <h1 class="main-heading">এইচএসসি জীববিজ্ঞান ড্যাশবোর্ড - ফাহাদ স্যার</h1>
+
+        <div id="status-area"></div> <!-- Status messages -->
+
+        <div class="syllabus-grid" id="syllabus-container">
+            <!-- Loading Placeholder -->
+             <div class="loading-placeholder">
+                 <div class="spinner"></div>
+                 <span>সিলেবাস লোড হচ্ছে...</span>
+             </div>
+            <!-- Dynamic content -->
+        </div>
+    </div>
+
+    <!-- Video Modal -->
+    <div id="video-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title-heading">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modal-title-heading" class="modal-title">লোড হচ্ছে...</h2>
+                <button class="close-button" id="modal-close-btn" aria-label="বন্ধ করুন" title="বন্ধ করুন">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="youtube-player-container">
+                     <div class="player-message">প্লেয়ার লোড হচ্ছে...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- YouTube IFrame Player API -->
+    <script src="https://www.youtube.com/iframe_api"></script>
+
+    <script>
+        // --- Configuration ---
+        const LOCAL_STORAGE_KEY = 'hscBiologySyllabusFahadSir_v5'; // Version change due to structure
+        const STATUS_MESSAGE_DURATION = 4000;
+
+        // --- Default Syllabus Data (Structure v5) ---
+        const defaultSyllabusData = {
+            botany: {
+                title: "জীববিজ্ঞান ১ম পত্র (উদ্ভিদবিজ্ঞান)",
+                icon: "icon-book-open",
+                chapters: [
+                    { name: "কোষ ও এর গঠন", link: "https://youtube.com/playlist?list=PLswINIQ-EdeTg2tufknbKjlleZGSvd4iV" },
+                    { name: "কোষ বিভাজন", link: "https://youtube.com/playlist?list=PLswINIQ-EdeSm5X5lSQ7xYWeXi_MXY9iX" },
+                    { name: "কোষ রসায়ন", link: "https://youtube.com/playlist?list=PLPAX8LWombCxH-WBD6fLjOxrsLCoxXStO" },
+                    { name: "অণুজীব", link: "https://youtube.com/playlist?list=PLPAX8LWombCyJZsSLbz-lVH1AyrF6L8wp" },
+                    { name: "শৈবাল ও ছত্রাক", link: "https://youtube.com/playlist?list=PLPAX8LWombCxrzYTNwOqmm1PIIOx1SavH" },
+                    { name: "ব্রায়োফাইটা ও টেরিডোফাইটা", link: null },
+                    { name: "নগ্নবীজী ও আবৃতবীজী উদ্ভিদ", link: "https://youtube.com/playlist?list=PLPAX8LWombCwF9Aa_7elma2Ed-iXSJAjr" },
+                    { name: "টিস্যু ও টিস্যুতন্ত্র", link: null },
+                    { name: "উদ্ভিদ শারীরতত্ত্ব", link: null },
+                    { name: "উদ্ভিদ প্রজনন", link: null },
+                    { name: "জীব প্রযুক্তি", link: null },
+                    { name: "জীবের পরিবেশ, বিস্তার ও সংরক্ষণ", link: null }
+                ],
+                additionalResources: [] // Empty by default
+            },
+            zoology: {
+                title: "জীববিজ্ঞান ২য় পত্র (প্রাণিবিজ্ঞান)",
+                icon: "icon-flask",
+                chapters: [
+                    { name: "প্রাণীর বিভিন্নতা ও শ্রেণিবিন্যাস", link: "https://youtube.com/playlist?list=PLswINIQ-EdeQt_jKLxdWPptzxnFp0Xrjs" },
+                    { name: "প্রাণীর পরিচিতি (হাইড্রা, ঘাসফড়িং, রুই মাছ)", link: "https://youtube.com/playlist?list=PLPAX8LWombCzGupTAk_u12Uger2UlM3UI" }, // Note included in name
+                    { name: "পরিপাক ও শোষণ", link: "https://youtube.com/playlist?list=PLswINIQ-EdeTwp-qZUJvtuDYEC4T-GaFE" },
+                    { name: "রক্ত ও সঞ্চালন", link: "https://youtube.com/playlist?list=PLPAX8LWombCzo-FGoU6LVfRef4q7Bl6QG" },
+                    { name: "শ্বাস ক্রিয়া ও শ্বসন", link: null },
+                    { name: "বর্জ্য ও নিষ্কাশন", link: null },
+                    { name: "চলন ও অঙ্গচালনা", link: null },
+                    { name: "সমন্বয় ও নিয়ন্ত্রণ", link: null },
+                    { name: "মানব জীবনের ধারাবাহিকতা (প্রজনন)", link: null }, // Note included in name
+                    { name: "মানবদেহের প্রতিরক্ষা (ইমিউনিটি)", link: null }, // Note included in name
+                    { name: "জিনতত্ত্ব ও বিবর্তন", link: null },
+                    { name: "প্রাণীর আচরণ", link: null }
+                ],
+                additionalResources: [] // Empty by default
+            }
+        };
+
+        // --- Global Variables ---
+        let syllabusData = {};
+        let player;
+        const modal = document.getElementById("video-modal");
+        const modalCloseBtn = document.getElementById("modal-close-btn");
+        const modalTitleEl = document.getElementById("modal-title-heading");
+        const playerContainer = document.getElementById('youtube-player-container');
+        const syllabusContainer = document.getElementById('syllabus-container');
+        const statusArea = document.getElementById('status-area');
+        let activeStatusTimeouts = [];
+        let activeEditElement = null; // Track which item (chapter/resource) is being edited
+
+        // --- Utility Functions ---
+        function getPlaylistIdFromUrl(url) { /* ... (remains same) ... */
+            if (!url || typeof url !== 'string') return null;
+            try {
+                const urlObj = new URL(url);
+                const hostname = urlObj.hostname.toLowerCase();
+                if ((hostname === 'youtube.com' || hostname.endsWith('.youtube.com')) && urlObj.pathname === '/playlist') {
+                    const playlistId = urlObj.searchParams.get('list');
+                    if (playlistId && /^[a-zA-Z0-9_-]{11,}$/.test(playlistId)) {
+                        return playlistId;
+                    }
+                }
+            } catch (e) { console.debug("URL parsing failed (playlist):", url, e); }
+            return null;
+        }
+
+        function getVideoIdFromUrl(url) {
+            if (!url || typeof url !== 'string') return null;
+            try {
+                const urlObj = new URL(url);
+                const hostname = urlObj.hostname.toLowerCase();
+                let videoId = null;
+
+                if (hostname === 'youtu.be') {
+                    videoId = urlObj.pathname.slice(1); // Remove leading '/'
+                } else if ((hostname === 'youtube.com' || hostname.endsWith('.youtube.com'))) {
+                    if (urlObj.pathname === '/watch') {
+                        videoId = urlObj.searchParams.get('v');
+                    } else if (urlObj.pathname.startsWith('/embed/')) {
+                        videoId = urlObj.pathname.split('/')[2];
+                    } else if (urlObj.pathname.startsWith('/v/')) { // Older format
+                         videoId = urlObj.pathname.split('/')[2];
+                    } else if (urlObj.pathname.startsWith('/shorts/')) { // Shorts format
+                         videoId = urlObj.pathname.split('/')[2];
+                    }
+                }
+
+                // Basic validation for YT video ID format
+                if (videoId && /^[a-zA-Z0-9_-]{11}$/.test(videoId)) {
+                    return videoId;
+                }
+            } catch (e) { console.debug("URL parsing failed (video):", url, e); }
+            return null;
+        }
+
+        function isValidUrl(string, requireHttp = true) { // Added optional flag
+            if (!string || typeof string !== 'string') return false;
+            if (requireHttp && !string.startsWith('http://') && !string.startsWith('https://')) {
+                return false;
+            }
+            try {
+                new URL(string); // Check if it's a valid URL structure
+                return true;
+            } catch (_) {
+                return false;
+            }
+        }
+
+        function isYoutubeUrl(url) {
+            if (!isValidUrl(url)) return false;
+            try {
+                 const hostname = new URL(url).hostname.toLowerCase();
+                 return hostname === 'youtube.com' || hostname.endsWith('.youtube.com') || hostname === 'youtu.be';
+            } catch (_) {
+                 return false;
+            }
+        }
+
+        function displayStatusMessage(/* ... (remains same) ... */ message, type = 'info', duration = STATUS_MESSAGE_DURATION) {
+            activeStatusTimeouts.forEach(timeoutData => clearTimeout(timeoutData.timeoutId));
+            activeStatusTimeouts = [];
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `status-message status-${type}`;
+            messageDiv.textContent = message;
+            messageDiv.style.opacity = '0';
+            statusArea.prepend(messageDiv);
+            void messageDiv.offsetWidth;
+            messageDiv.style.opacity = '1';
+            const timeoutId = setTimeout(() => {
+                messageDiv.style.animation = 'fadeOutUp 0.4s ease-out forwards';
+                messageDiv.addEventListener('animationend', () => {
+                    if (messageDiv.parentNode === statusArea) statusArea.removeChild(messageDiv);
+                    activeStatusTimeouts = activeStatusTimeouts.filter(t => t.element !== messageDiv);
+                }, { once: true });
+            }, duration);
+            activeStatusTimeouts.push({ timeoutId: timeoutId, element: messageDiv });
+        }
+
+        // --- LocalStorage Functions ---
+        function loadSyllabusData() {
+            try {
+                const storedData = localStorage.getItem(LOCAL_STORAGE_KEY);
+                if (storedData) {
+                    const parsedData = JSON.parse(storedData);
+                    // Validation for v5 structure
+                    if (parsedData?.botany?.chapters && Array.isArray(parsedData.botany.chapters) &&
+                        parsedData?.zoology?.chapters && Array.isArray(parsedData.zoology.chapters) &&
+                        Array.isArray(parsedData.botany.additionalResources) && // Check for new array
+                        Array.isArray(parsedData.zoology.additionalResources) &&
+                        parsedData.botany.chapters.every(ch => typeof ch === 'object' && ch !== null && 'name' in ch && !('note' in ch)) && // Ensure 'note' is absent
+                        parsedData.zoology.chapters.every(ch => typeof ch === 'object' && ch !== null && 'name' in ch && !('note' in ch)) &&
+                        parsedData.botany.additionalResources.every(res => typeof res === 'object' && res !== null && 'title' in res && 'link' in res) &&
+                        parsedData.zoology.additionalResources.every(res => typeof res === 'object' && res !== null && 'title' in res && 'link' in res)
+                    ) {
+                        syllabusData = parsedData;
+                        console.info("Syllabus data (v5) loaded from localStorage.");
+                    } else {
+                        console.warn("Stored data structure mismatch or invalid (v5). Resetting to default.");
+                        resetToDefaultData(true); // Reset and save new default
+                    }
+                } else {
+                    console.info("No data in localStorage. Initializing with default syllabus (v5).");
+                    resetToDefaultData(true); // Set and save new default
+                }
+            } catch (error) {
+                console.error("Error loading/parsing from localStorage:", error);
+                displayStatusMessage("লোকাল স্টোরেজ থেকে ডেটা লোড করতে সমস্যা হয়েছে। ডিফল্ট ডেটা ব্যবহার করা হচ্ছে।", "error", 5000);
+                resetToDefaultData(true);
+            }
+        }
+
+        function resetToDefaultData(save = true) { /* ... (remains same logic, uses new defaultSyllabusData) ... */
+            if (typeof structuredClone === 'function') {
+                 syllabusData = structuredClone(defaultSyllabusData);
+             } else {
+                 syllabusData = JSON.parse(JSON.stringify(defaultSyllabusData));
+             }
+             if (save) {
+                 saveSyllabusData();
+             }
+             console.info("Syllabus data reset to default (v5).");
+        }
+
+        function saveSyllabusData() { /* ... (remains same) ... */
+            try {
+                localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(syllabusData));
+                console.info("Syllabus data (v5) saved to localStorage.");
+            } catch (error) {
+                console.error("Error saving to localStorage:", error);
+                let message = "অপ্রত্যাশিত ত্রুটি! পরিবর্তন লোকাল স্টোরেজে সংরক্ষণ করা যায়নি।";
+                if (error.name === 'QuotaExceededError' || (error.code && (error.code === 22 || error.code === 1014))) {
+                    message = "লোকাল স্টোরেজ পূর্ণ। কিছু ডেটা মুছে আবার চেষ্টা করুন। পরিবর্তন সংরক্ষণ করা যায়নি।";
+                }
+                displayStatusMessage(message, "error", 6000);
+            }
+        }
+
+        // --- Rendering Functions ---
+        function renderSyllabus() {
+            let html = '';
+            let sectionIndex = 0;
+            syllabusContainer.innerHTML = `<div class="loading-placeholder"><div class="spinner"></div><span>সিলেবাস লোড হচ্ছে...</span></div>`; // Show loading initially
+
+            if (!syllabusData || !syllabusData.botany || !syllabusData.zoology) {
+                 syllabusContainer.innerHTML = `<div class="loading-placeholder" style="color: var(--danger-color);">সিলেবাস ডেটা লোড করা সম্ভব হয়নি। পৃষ্ঠা রিফ্রেশ করুন।</div>`;
+                 return;
+            }
+
+            for (const paperKey in syllabusData) {
+                if (Object.hasOwnProperty.call(syllabusData, paperKey) && syllabusData[paperKey]?.chapters) {
+                    html += renderPaperSection(paperKey, syllabusData[paperKey], sectionIndex);
+                    sectionIndex++;
+                } else {
+                    console.warn(`Invalid or missing data for paper key: ${paperKey}`);
+                }
+            }
+
+            // Use requestAnimationFrame to ensure loading is visible before replacing
+            requestAnimationFrame(() => {
+                 if (html) {
+                     syllabusContainer.innerHTML = html;
+                     // Trigger animations (CSS handles this via class/keyframes now)
+                     document.querySelectorAll('.paper-section, .chapter-item, .resource-item').forEach(el => {
+                          el.style.opacity = ''; // Reset opacity if set inline previously
+                     });
+                 } else {
+                     syllabusContainer.innerHTML = `<div class="loading-placeholder" style="color: var(--text-color);">কোনো সিলেবাস ডেটা পাওয়া যায়নি।</div>`;
+                 }
+                 attachEventListeners();
+            });
+        }
+
+        function renderPaperSection(paperKey, paperData, sectionIndex) {
+            if (!paperData || !Array.isArray(paperData.chapters) || !Array.isArray(paperData.additionalResources)) {
+                 console.error(`Invalid paper data for key: ${paperKey}`);
+                 return '';
+            }
+            let chapterHtml = paperData.chapters.map((chapter, index) =>
+                renderChapterItem(paperKey, index, chapter)
+            ).join('');
+
+            let resourceHtml = paperData.additionalResources.map((resource, index) =>
+                renderResourceItem(paperKey, index, resource)
+            ).join('');
+
+            return `
+                <section class="paper-section" id="${paperKey}" style="--section-index: ${sectionIndex};">
+                    <h2 class="paper-title">
+                        <svg class="icon" aria-hidden="true"><use xlink:href="#${paperData.icon || 'icon-book-open'}"></use></svg>
+                        ${escapeHtml(paperData.title)}
+                    </h2>
+                    <ol class="chapter-list">
+                        ${chapterHtml}
+                    </ol>
+
+                    <div class="additional-resources-section">
+                         <h3 class="section-heading">
+                              <svg class="icon" aria-hidden="true"><use xlink:href="#icon-resources"></use></svg>
+                              অতিরিক্ত রিসোর্স / নোট / সলভিং ক্লাস
+                         </h3>
+                         <ul class="resource-list">
+                              ${resourceHtml || '<li style="color: var(--placeholder-color); padding: 10px 0;">কোনো অতিরিক্ত রিসোর্স যোগ করা হয়নি।</li>'}
+                         </ul>
+                         <button class="btn btn-add-resource" data-action="add-resource" data-paper-key="${paperKey}" title="নতুন ভিডিও বা নোট লিংক যোগ করুন">
+                              <svg class="icon" aria-hidden="true"><use xlink:href="#icon-add"></use></svg>
+                              নতুন রিসোর্স যোগ করুন
+                         </button>
+                     </div>
+                </section>
+            `;
+        }
+
+        function renderChapterItem(paperKey, chapterIndex, chapter) {
+             if (typeof chapter !== 'object' || chapter === null || typeof chapter.name !== 'string') {
+                 console.warn(`Invalid chapter data at index ${chapterIndex} for paper ${paperKey}`);
+                 return `<li class="chapter-item" style="--item-index: ${chapterIndex}; opacity: 1; background-color: #fff5f5; color: var(--danger-color); padding: 10px;">ত্রুটি: অধ্যায়ের ডেটা লোড করা যায়নি।</li>`;
+             }
+
+            const playlistId = getPlaylistIdFromUrl(chapter.link);
+            const hasLink = !!playlistId;
+
+            let buttonsHtml = '';
+            if (hasLink) {
+                buttonsHtml = `
+                    <button class="btn btn-watch" data-action="watch-chapter" data-playlist-id="${playlistId}" data-chapter-name="${escapeHtml(chapter.name)}" title="ক্লাস প্লেলিস্ট দেখুন">
+                        <svg class="icon" aria-hidden="true"><use xlink:href="#icon-play"></use></svg>ক্লাস করুন
+                    </button>
+                    <button class="btn btn-edit" data-action="edit-chapter" title="অধ্যায়ের নাম বা প্লেলিস্ট লিংক পরিবর্তন করুন">
+                        <svg class="icon" aria-hidden="true"><use xlink:href="#icon-edit"></use></svg>এডিট
+                    </button>
+                `;
+            } else {
+                buttonsHtml = `
+                    <button class="btn btn-add-link" data-action="edit-chapter" title="ইউটিউব প্লেলিস্ট লিংক যুক্ত করুন">
+                         <svg class="icon" aria-hidden="true"><use xlink:href="#icon-add"></use></svg>প্লেলিস্ট লিঙ্ক যুক্ত করুন
+                    </button>
+                `;
+            }
+
+            return `
+                <li class="chapter-item" data-item-type="chapter" data-paper-key="${paperKey}" data-index="${chapterIndex}" style="--item-index: ${chapterIndex};">
+                    <div class="item-content">
+                        <div class="item-info">
+                             <span class="chapter-number">${chapterIndex + 1}.</span>
+                             <span class="chapter-name">${escapeHtml(chapter.name)}</span>
+                        </div>
+                         <div class="link-area">
+                            ${buttonsHtml}
+                         </div>
+                    </div>
+                    <div class="edit-mode">
+                        <form class="edit-form" data-item-type="chapter" novalidate>
+                            <div class="edit-fields">
+                                <div>
+                                    <label for="edit-chapter-name-${paperKey}-${chapterIndex}">অধ্যায়ের নাম:</label>
+                                    <input type="text" id="edit-chapter-name-${paperKey}-${chapterIndex}" value="${escapeHtml(chapter.name)}" placeholder="অধ্যায়ের নাম" required>
+                                </div>
+                                <div>
+                                     <label for="edit-chapter-link-${paperKey}-${chapterIndex}">ইউটিউব প্লেলিস্ট লিংক:</label>
+                                     <input type="url" id="edit-chapter-link-${paperKey}-${chapterIndex}" value="${chapter.link || ''}" placeholder="সম্পূর্ণ ইউটিউব প্লেলিস্ট লিংক পেস্ট করুন">
+                                </div>
+                            </div>
+                            <div class="edit-actions">
+                                <button type="submit" class="btn btn-save" title="পরিবর্তন সংরক্ষণ করুন">
+                                    <svg class="icon" aria-hidden="true"><use xlink:href="#icon-save"></use></svg>সেভ
+                                </button>
+                                <button type="button" class="btn btn-cancel" data-action="cancel-edit" title="বাতিল করুন">
+                                    <svg class="icon" aria-hidden="true"><use xlink:href="#icon-cancel"></use></svg> বাতিল
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </li>
+            `;
+        }
+
+        function renderResourceItem(paperKey, resourceIndex, resource) {
+            if (typeof resource !== 'object' || resource === null || typeof resource.title !== 'string' || typeof resource.link !== 'string') {
+                 console.warn(`Invalid resource data at index ${resourceIndex} for paper ${paperKey}`);
+                 return `<li class="resource-item" style="--item-index: ${resourceIndex}; opacity: 1; background-color: #fff5f5; color: var(--danger-color); padding: 10px;">ত্রুটি: রিসোর্সের ডেটা লোড করা যায়নি।</li>`;
+             }
+
+            const videoId = getVideoIdFromUrl(resource.link);
+            const isYtVideo = !!videoId;
+            const linkIcon = isYtVideo ? 'icon-video' : 'icon-link';
+            const openAction = isYtVideo ? 'watch-resource' : 'open-link';
+            const openTitle = isYtVideo ? 'ভিডিও দেখুন' : 'লিঙ্ক খুলুন';
+
+            return `
+                 <li class="resource-item" data-item-type="resource" data-paper-key="${paperKey}" data-index="${resourceIndex}" style="--item-index: ${resourceIndex};">
+                    <div class="item-content">
+                         <div class="item-info">
+                              <svg class="icon resource-icon" aria-hidden="true"><use xlink:href="#${linkIcon}"></use></svg>
+                              <span class="resource-title">${escapeHtml(resource.title)}</span>
+                         </div>
+                         <div class="link-area">
+                             <button class="btn btn-open" data-action="${openAction}" data-link="${escapeHtml(resource.link)}" data-video-id="${videoId || ''}" data-title="${escapeHtml(resource.title)}" title="${openTitle}">
+                                 <svg class="icon" aria-hidden="true"><use xlink:href="#${linkIcon === 'icon-video' ? 'icon-play' : 'icon-link'}"></use></svg> <!-- Use play icon for video button -->
+                                 ${isYtVideo ? 'দেখুন' : 'খুলুন'}
+                             </button>
+                             <button class="btn btn-edit" data-action="edit-resource" title="রিসোর্স টাইটেল বা লিংক পরিবর্তন করুন">
+                                 <svg class="icon" aria-hidden="true"><use xlink:href="#icon-edit"></use></svg>এডিট
+                             </button>
+                             <button class="btn btn-delete" data-action="delete-resource" title="রিসোর্স মুছে ফেলুন">
+                                 <svg class="icon" aria-hidden="true"><use xlink:href="#icon-delete"></use></svg>
+                             </button>
+                         </div>
+                    </div>
+                     <div class="edit-mode">
+                         <form class="edit-form" data-item-type="resource" novalidate>
+                             <div class="edit-fields">
+                                 <div>
+                                     <label for="edit-resource-title-${paperKey}-${resourceIndex}">রিসোর্সের টাইটেল:</label>
+                                     <input type="text" id="edit-resource-title-${paperKey}-${resourceIndex}" value="${escapeHtml(resource.title)}" placeholder="যেমন: ১ম অধ্যায় সলভিং ক্লাস" required>
+                                 </div>
+                                 <div>
+                                      <label for="edit-resource-link-${paperKey}-${resourceIndex}">ভিডিও/নোট লিংক:</label>
+                                      <input type="url" id="edit-resource-link-${paperKey}-${resourceIndex}" value="${escapeHtml(resource.link)}" placeholder="সম্পূর্ণ URL পেস্ট করুন (ইউটিউব বা অন্য)" required>
+                                 </div>
+                             </div>
+                             <div class="edit-actions">
+                                 <button type="submit" class="btn btn-save" title="পরিবর্তন সংরক্ষণ করুন">
+                                     <svg class="icon" aria-hidden="true"><use xlink:href="#icon-save"></use></svg>সেভ
+                                 </button>
+                                 <button type="button" class="btn btn-cancel" data-action="cancel-edit" title="বাতিল করুন">
+                                     <svg class="icon" aria-hidden="true"><use xlink:href="#icon-cancel"></use></svg> বাতিল
+                                 </button>
+                             </div>
+                         </form>
+                     </div>
+                 </li>
+             `;
+        }
+
+        function escapeHtml(unsafe) { /* ... (remains same) ... */
+            if (typeof unsafe !== 'string') return unsafe === null || unsafe === undefined ? '' : String(unsafe);
+            return unsafe.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+        }
+
+        // --- Event Handling ---
+        let isListenerAttached = false;
+        let isSubmitListenerAttached = false;
+
+        function attachEventListeners() {
+            if (!isListenerAttached) {
+                 syllabusContainer.addEventListener('click', handleSyllabusClick);
+                 isListenerAttached = true;
+                 console.debug("Syllabus click listener attached.");
+            }
+            if (isSubmitListenerAttached) {
+                 syllabusContainer.removeEventListener('submit', handleEditFormSubmit);
+            }
+             syllabusContainer.addEventListener('submit', handleEditFormSubmit);
+             isSubmitListenerAttached = true;
+             console.debug("Syllabus submit listener attached/re-attached.");
+        }
+
+        function handleEditFormSubmit(event) {
+             event.preventDefault();
+             const form = event.target;
+             if (!form.classList.contains('edit-form')) return;
+
+             const itemElement = form.closest('.chapter-item, .resource-item');
+             if (!itemElement) return;
+
+             const itemType = itemElement.dataset.itemType; // 'chapter' or 'resource'
+             const paperKey = itemElement.dataset.paperKey;
+             const index = parseInt(itemElement.dataset.index, 10);
+
+             if (itemType === 'chapter') {
+                 saveChapterChanges(itemElement, paperKey, index);
+             } else if (itemType === 'resource') {
+                 saveResourceChanges(itemElement, paperKey, index);
+             }
+         }
+
+        function handleSyllabusClick(event) {
+            const targetButton = event.target.closest('button[data-action]');
+            if (!targetButton) return;
+
+            const action = targetButton.dataset.action;
+
+            // Let form submit handle save
+            if (action === 'save-chapter' || action === 'save-resource') return;
+            // Let cancel button handle itself within toggleEditMode
+            if (action === 'cancel-edit') {
+                 event.preventDefault();
+                 const itemElement = targetButton.closest('.chapter-item, .resource-item');
+                 if(itemElement) toggleEditMode(itemElement, false); // Just hide, reset happens visually later if needed
+                 return;
+            }
+
+             // --- Actions requiring item context ---
+            const itemElement = targetButton.closest('.chapter-item, .resource-item');
+            const paperKey = itemElement?.dataset.paperKey || targetButton.dataset.paperKey; // For add-resource button
+            const index = itemElement ? parseInt(itemElement.dataset.index, 10) : -1; // -1 for add
+            const itemType = itemElement?.dataset.itemType; // 'chapter', 'resource', or undefined for add
+
+            if (!paperKey) {
+                 console.error("Action button clicked without paperKey context:", action, targetButton);
+                 return;
+            }
+            // Prevent default for actions that shouldn't submit/navigate
+            event.preventDefault();
+
+            console.debug(`Action: ${action}, Type: ${itemType}, Paper: ${paperKey}, Index: ${index}`);
+
+            switch (action) {
+                // Chapter Actions
+                case 'watch-chapter':
+                    openModal(targetButton.dataset.playlistId, targetButton.dataset.chapterName, 'playlist');
+                    break;
+                case 'edit-chapter':
+                    if (itemElement) toggleEditMode(itemElement, true);
+                    break;
+
+                // Resource Actions
+                 case 'add-resource':
+                     // Immediately add a blank item and enter edit mode for it
+                     addNewResource(paperKey);
+                     break;
+                case 'watch-resource': // YouTube Video
+                    openModal(targetButton.dataset.videoId, targetButton.dataset.title, 'video');
+                    break;
+                case 'open-link': // Non-YouTube Link
+                    window.open(targetButton.dataset.link, '_blank', 'noopener noreferrer');
+                    break;
+                case 'edit-resource':
+                     if (itemElement) toggleEditMode(itemElement, true);
+                    break;
+                case 'delete-resource':
+                    if (itemElement) deleteResource(itemElement, paperKey, index);
+                    break;
+
+                // Common Actions (Handled above or by submit)
+                 // case 'cancel-edit': // Handled above
+            }
+        }
+
+        function toggleEditMode(itemElement, showEdit) {
+            const contentDiv = itemElement.querySelector('.item-content');
+            const editDiv = itemElement.querySelector('.edit-mode');
+
+            if (!contentDiv || !editDiv) return;
+
+            // Cancel any other active edit mode first
+             if (showEdit && activeEditElement && activeEditElement !== itemElement) {
+                 toggleEditMode(activeEditElement, false); // Hide the other one
+             }
+
+            if (showEdit) {
+                const itemType = itemElement.dataset.itemType;
+                const paperKey = itemElement.dataset.paperKey;
+                const index = parseInt(itemElement.dataset.index, 10);
+
+                let dataObject;
+                if (itemType === 'chapter') {
+                     dataObject = syllabusData[paperKey]?.chapters?.[index];
+                     if (!dataObject) return;
+                     const nameInput = editDiv.querySelector(`#edit-chapter-name-${paperKey}-${index}`);
+                     const linkInput = editDiv.querySelector(`#edit-chapter-link-${paperKey}-${index}`);
+                     nameInput.value = dataObject.name;
+                     linkInput.value = dataObject.link || '';
+                     nameInput.classList.remove('input-error');
+                     linkInput.classList.remove('input-error');
+                     nameInput.focus(); nameInput.select();
+                } else if (itemType === 'resource') {
+                     dataObject = syllabusData[paperKey]?.additionalResources?.[index];
+                     if (!dataObject) return;
+                     const titleInput = editDiv.querySelector(`#edit-resource-title-${paperKey}-${index}`);
+                     const linkInput = editDiv.querySelector(`#edit-resource-link-${paperKey}-${index}`);
+                     titleInput.value = dataObject.title;
+                     linkInput.value = dataObject.link || '';
+                     titleInput.classList.remove('input-error');
+                     linkInput.classList.remove('input-error');
+                     titleInput.focus(); titleInput.select();
+                } else { return; } // Unknown type
+
+
+                contentDiv.classList.add('hidden');
+                editDiv.style.display = 'block';
+                activeEditElement = itemElement; // Track the active edit
+            } else {
+                 // Reset fields visually from data before hiding (in case cancel was clicked mid-edit)
+                 const itemType = itemElement.dataset.itemType;
+                 const paperKey = itemElement.dataset.paperKey;
+                 const index = parseInt(itemElement.dataset.index, 10);
+                 let dataObject;
+                 if(itemType === 'chapter') dataObject = syllabusData[paperKey]?.chapters?.[index];
+                 else if (itemType === 'resource') dataObject = syllabusData[paperKey]?.additionalResources?.[index];
+
+                 if (dataObject) {
+                      if (itemType === 'chapter') {
+                           editDiv.querySelector(`#edit-chapter-name-${paperKey}-${index}`).value = dataObject.name;
+                           editDiv.querySelector(`#edit-chapter-link-${paperKey}-${index}`).value = dataObject.link || '';
+                      } else if (itemType === 'resource') {
+                           editDiv.querySelector(`#edit-resource-title-${paperKey}-${index}`).value = dataObject.title;
+                           editDiv.querySelector(`#edit-resource-link-${paperKey}-${index}`).value = dataObject.link || '';
+                      }
+                 }
+
+                editDiv.style.display = 'none';
+                contentDiv.classList.remove('hidden');
+                editDiv.querySelectorAll('.input-error').forEach(el => el.classList.remove('input-error'));
+                if (activeEditElement === itemElement) activeEditElement = null; // Clear tracker
+            }
+        }
+
+        function saveChapterChanges(itemElement, paperKey, index) {
+            const editDiv = itemElement.querySelector('.edit-mode');
+            const nameInput = editDiv.querySelector(`#edit-chapter-name-${paperKey}-${index}`);
+            const linkInput = editDiv.querySelector(`#edit-chapter-link-${paperKey}-${index}`);
+
+            nameInput.classList.remove('input-error');
+            linkInput.classList.remove('input-error');
+
+            const newName = nameInput.value.trim();
+            const newLinkRaw = linkInput.value.trim();
+            let newLink = null; // Default to null
+
+            let isValid = true;
+            if (!newName) {
+                displayStatusMessage("অধ্যায়ের নাম খালি রাখা যাবে না।", "error");
+                nameInput.classList.add('input-error'); nameInput.focus(); isValid = false;
+            }
+
+            // Link validation (Playlist specific for chapters)
+            if (newLinkRaw) {
+                 if (!isYoutubeUrl(newLinkRaw)) { // Basic YT check first
+                      displayStatusMessage("দয়া করে একটি সঠিক ইউটিউব URL লিখুন।", "error");
+                      linkInput.classList.add('input-error'); if(isValid) linkInput.focus(); isValid = false;
+                 } else {
+                      const playlistId = getPlaylistIdFromUrl(newLinkRaw);
+                      if (!playlistId) {
+                           displayStatusMessage("অধ্যায়ের জন্য একটি ইউটিউব *প্লেলিস্ট* লিঙ্ক প্রয়োজন।", "error");
+                           linkInput.classList.add('input-error'); if(isValid) linkInput.focus(); isValid = false;
+                      } else {
+                           newLink = newLinkRaw; // Valid playlist URL
+                      }
+                 }
+            } // else: newLink remains null
+
+            if (!isValid) return;
+
+            const originalChapter = syllabusData[paperKey].chapters[index];
+            let changed = originalChapter.name !== newName || originalChapter.link !== newLink;
+
+             if (changed) {
+                  originalChapter.name = newName;
+                  originalChapter.link = newLink;
+                  saveSyllabusData();
+                  // Re-render the specific item - safest approach
+                  const reRenderedItemHTML = renderChapterItem(paperKey, index, originalChapter);
+                  const tempDiv = document.createElement('div'); tempDiv.innerHTML = reRenderedItemHTML;
+                  const newItemElement = tempDiv.firstElementChild;
+                  if (newItemElement && itemElement.parentNode) {
+                       itemElement.parentNode.replaceChild(newItemElement, itemElement);
+                       activeEditElement = null; // Clear edit tracker
+                       displayStatusMessage(`অধ্যায় "${escapeHtml(newName)}" আপডেট করা হয়েছে।`, "success");
+                  } else { renderSyllabus(); } // Fallback full render
+             } else {
+                  toggleEditMode(itemElement, false); // No changes, just close
+                  displayStatusMessage("কোনো পরিবর্তন করা হয়নি।", "info", 2000);
+             }
+        }
+
+        function addNewResource(paperKey) {
+             if (!syllabusData[paperKey]) return;
+             const newResource = { title: "", link: "" };
+             syllabusData[paperKey].additionalResources.push(newResource);
+             const newIndex = syllabusData[paperKey].additionalResources.length - 1;
+
+             // Re-render the entire paper section to include the new item structure
+             const paperSectionElement = document.getElementById(paperKey);
+             if (paperSectionElement) {
+                 const sectionIndex = Array.from(syllabusContainer.children).indexOf(paperSectionElement);
+                 const updatedSectionHTML = renderPaperSection(paperKey, syllabusData[paperKey], sectionIndex);
+                 const tempDiv = document.createElement('div');
+                 tempDiv.innerHTML = updatedSectionHTML;
+                 const newSectionElement = tempDiv.firstElementChild;
+
+                 if (newSectionElement) {
+                     syllabusContainer.replaceChild(newSectionElement, paperSectionElement);
+                     // Find the newly added item and put it in edit mode
+                     const newItemElement = newSectionElement.querySelector(`.resource-item[data-index="${newIndex}"]`);
+                     if (newItemElement) {
+                         // Scroll into view smoothly if possible
+                         newItemElement.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                         // Use setTimeout to ensure element is fully rendered before toggling edit
+                         setTimeout(() => {
+                             toggleEditMode(newItemElement, true);
+                             displayStatusMessage("নতুন রিসোর্সের তথ্য পূরণ করুন।", "info");
+                         }, 100); // Small delay
+                     }
+                 } else { renderSyllabus(); } // Fallback
+             } else { renderSyllabus(); } // Fallback
+         }
+
+
+         function saveResourceChanges(itemElement, paperKey, index) {
+            const editDiv = itemElement.querySelector('.edit-mode');
+            const titleInput = editDiv.querySelector(`#edit-resource-title-${paperKey}-${index}`);
+            const linkInput = editDiv.querySelector(`#edit-resource-link-${paperKey}-${index}`);
+
+            titleInput.classList.remove('input-error');
+            linkInput.classList.remove('input-error');
+
+            const newTitle = titleInput.value.trim();
+            const newLink = linkInput.value.trim();
+
+            let isValid = true;
+            if (!newTitle) {
+                displayStatusMessage("রিসোর্সের টাইটেল খালি রাখা যাবে না।", "error");
+                titleInput.classList.add('input-error'); titleInput.focus(); isValid = false;
+            }
+            if (!newLink) {
+                 displayStatusMessage("লিংক খালি রাখা যাবে না।", "error");
+                 linkInput.classList.add('input-error'); if(isValid) linkInput.focus(); isValid = false;
+            } else if (!isValidUrl(newLink)) { // Validate general URL format
+                 displayStatusMessage("দয়া করে একটি সঠিক URL লিখুন।", "error");
+                 linkInput.classList.add('input-error'); if(isValid) linkInput.focus(); isValid = false;
+            }
+
+            if (!isValid) return;
+
+            const originalResource = syllabusData[paperKey].additionalResources[index];
+            // Handle case where the resource might have been deleted concurrently (unlikely but safe)
+             if (!originalResource) {
+                  console.warn("Attempted to save a resource that no longer exists at index:", index);
+                  toggleEditMode(itemElement, false); // Just close edit mode
+                  renderSyllabus(); // Refresh UI
+                  return;
+             }
+
+            let changed = originalResource.title !== newTitle || originalResource.link !== newLink;
+
+             if (changed) {
+                  originalResource.title = newTitle;
+                  originalResource.link = newLink;
+                  saveSyllabusData();
+                  // Re-render the specific item
+                  const reRenderedItemHTML = renderResourceItem(paperKey, index, originalResource);
+                  const tempDiv = document.createElement('div'); tempDiv.innerHTML = reRenderedItemHTML;
+                  const newItemElement = tempDiv.firstElementChild;
+                  if (newItemElement && itemElement.parentNode) {
+                       itemElement.parentNode.replaceChild(newItemElement, itemElement);
+                       activeEditElement = null; // Clear edit tracker
+                       displayStatusMessage(`রিসোর্স "${escapeHtml(newTitle)}" আপডেট করা হয়েছে।`, "success");
+                  } else { renderSyllabus(); } // Fallback
+             } else {
+                  toggleEditMode(itemElement, false);
+                  displayStatusMessage("কোনো পরিবর্তন করা হয়নি।", "info", 2000);
+             }
+        }
+
+         function deleteResource(itemElement, paperKey, index) {
+             const resourceTitle = syllabusData[paperKey]?.additionalResources?.[index]?.title || "এই রিসোর্সটি";
+             if (confirm(`আপনি কি "${escapeHtml(resourceTitle)}" রিসোর্সটি মুছে ফেলতে চান?`)) {
+                 syllabusData[paperKey].additionalResources.splice(index, 1); // Remove from array
+                 saveSyllabusData();
+
+                 // Animate removal then re-render section for index consistency
+                 itemElement.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+                 itemElement.style.opacity = '0';
+                 itemElement.style.transform = 'translateX(-20px)';
+
+                 itemElement.addEventListener('transitionend', () => {
+                      // Re-render the whole paper section is safer for index updates
+                      const paperSectionElement = document.getElementById(paperKey);
+                      if (paperSectionElement) {
+                           const sectionIndex = Array.from(syllabusContainer.children).indexOf(paperSectionElement);
+                           const updatedSectionHTML = renderPaperSection(paperKey, syllabusData[paperKey], sectionIndex);
+                           const tempDiv = document.createElement('div');
+                           tempDiv.innerHTML = updatedSectionHTML;
+                           const newSectionElement = tempDiv.firstElementChild;
+                           if (newSectionElement) {
+                                syllabusContainer.replaceChild(newSectionElement, paperSectionElement);
+                           } else { renderSyllabus(); } // Fallback
+                      } else { renderSyllabus(); } // Fallback
+
+                      displayStatusMessage(`"${escapeHtml(resourceTitle)}" মুছে ফেলা হয়েছে।`, "success");
+                 }, { once: true });
+             }
+         }
+
+
+        // --- Modal and YouTube Player Logic ---
+        function onYouTubeIframeAPIReady() { /* ... (remains same) ... */
+             console.info("YouTube IFrame API Ready.");
+            if (modal.style.display === 'block' && modal.dataset.pendingContentId && !player) {
+                 console.info("API ready, loading player for pending modal request.");
+                 loadYouTubeContentInModal(modal.dataset.pendingContentId, modal.dataset.pendingContentType);
+                 delete modal.dataset.pendingContentId;
+                 delete modal.dataset.pendingContentType;
+            }
+        }
+
+        function showPlayerMessage(message, isError = false) { /* ... (remains same) ... */
+            playerContainer.innerHTML = `<div class="player-message ${isError ? 'error' : ''}">${escapeHtml(message)}</div>`;
+        }
+
+        // Modified to handle both video and playlist
+        function loadYouTubeContentInModal(contentId, contentType = 'video') { // Default to video
+            if (!contentId) {
+                 const errorMsg = contentType === 'playlist' ? "প্লেলিস্ট আইডি পাওয়া যায়নি।" : "ভিডিও আইডি পাওয়া যায়নি।";
+                 console.error(`No ${contentType} ID provided for modal player.`);
+                 showPlayerMessage(`ত্রুটি: ${errorMsg}`, true);
+                 return;
+            }
+
+            if (player && typeof player.destroy === 'function') {
+                 try { player.destroy(); player = null; } catch (e) { console.error("Error destroying previous player:", e); }
+            }
+
+            showPlayerMessage("প্লেয়ার লোড হচ্ছে...");
+            console.info(`Creating new player instance for ${contentType}:`, contentId);
+            const playerTargetId = `ytplayer-${Date.now()}`;
+            playerContainer.innerHTML = `<div id="${playerTargetId}"></div>`;
+
+            let playerVars = {
+                'playsinline': 1, 'autoplay': 1, 'modestbranding': 1, 'rel': 0,
+                'origin': window.location.origin
+            };
+
+            if (contentType === 'playlist') {
+                playerVars.listType = 'playlist';
+                playerVars.list = contentId;
+            } // No specific var needed for single video, just pass videoId to constructor
+
+             try {
+                  player = new YT.Player(playerTargetId, {
+                      height: '100%', width: '100%',
+                      videoId: contentType === 'video' ? contentId : undefined, // Only set videoId for videos
+                      playerVars: playerVars,
+                      events: { 'onReady': onPlayerReady, 'onError': onPlayerError, 'onStateChange': onPlayerStateChange }
+                  });
+             } catch (error) {
+                 console.error("Error creating YT.Player:", error);
+                 showPlayerMessage(`প্লেয়ার তৈরিতে ত্রুটি ঘটেছে: ${error.message}`, true);
+             }
+        }
+
+        function onPlayerReady(event) { /* ... (remains same) ... */
+            console.info("YouTube Player Ready. State:", event.target.getPlayerState());
+        }
+        function onPlayerStateChange(event) { /* ... (remains same) ... */
+             console.debug("Player state changed:", event.data);
+        }
+        function onPlayerError(event) { /* ... (modified error messages slightly) ... */
+             console.error('YouTube Player Error:', event.data, "Content ID:", modal.dataset.currentContentId, "Type:", modal.dataset.currentContentType);
+            let errorMessage = `দুঃখিত, এই ${modal.dataset.currentContentType === 'playlist' ? 'প্লেলিস্টটি' : 'ভিডিওটি'} লোড করা যায়নি। `;
+             switch (event.data) {
+                case 2: errorMessage += '(কারণ: ভুল আইডি বা URL ফরম্যাট)'; break;
+                case 5: errorMessage += '(কারণ: প্লেয়ারে একটি ত্রুটি হয়েছে)'; break;
+                case 100: errorMessage += '(কারণ: ভিডিও/প্লেলিস্ট খুঁজে পাওয়া যায়নি)'; break;
+                case 101: case 150: errorMessage += '(কারণ: মালিক এমবেডিং সীমাবদ্ধ করেছেন)'; break;
+                 default: errorMessage += `(ত্রুটি কোড: ${event.data})`;
+             }
+             errorMessage += ' লিঙ্কটি পরীক্ষা করুন বা পরে চেষ্টা করুন।';
+            showPlayerMessage(errorMessage, true);
+        }
+
+        // Modified to handle content type
+        function openModal(contentId, title, contentType = 'video') { // Default to video
+            if (!contentId) {
+                const errorMsg = contentType === 'playlist' ? "প্লেলিস্ট লিঙ্ক" : "ভিডিও লিঙ্ক";
+                displayStatusMessage(`দেখার জন্য কোনো সঠিক ${errorMsg} পাওয়া যায়নি।`, "error");
+                return;
+            }
+
+            console.info(`Opening modal for ${contentType}: ${contentId}, Title: ${title}`);
+            modalTitleEl.textContent = escapeHtml(title) || 'লোড হচ্ছে...';
+            modal.dataset.currentContentId = contentId;
+            modal.dataset.currentContentType = contentType;
+
+            modal.style.display = "block";
+            document.body.style.overflow = 'hidden';
+            modal.focus();
+
+            if (typeof YT !== 'undefined' && typeof YT.Player === 'function') {
+                loadYouTubeContentInModal(contentId, contentType);
+            } else {
+                 console.warn("YT API not ready yet. Player will load when API is ready.");
+                 showPlayerMessage("ইউটিউব প্লেয়ার লোড হচ্ছে...");
+                 modal.dataset.pendingContentId = contentId;
+                 modal.dataset.pendingContentType = contentType;
+            }
+        }
+
+        function closeModal() { /* ... (modified to clear new dataset attributes) ... */
+            console.info("Closing modal.");
+            modal.style.display = "none";
+            document.body.style.overflow = 'auto';
+
+            if (player) {
+                if (typeof player.stopVideo === 'function') try { player.stopVideo(); } catch (e) {}
+                if (typeof player.destroy === 'function') try { player.destroy(); player = null; } catch(e) { player = null; }
+                else { player = null; }
+            }
+             showPlayerMessage("প্লেয়ার লোড হচ্ছে..."); // Reset message
+             delete modal.dataset.currentContentId;
+             delete modal.dataset.currentContentType;
+             delete modal.dataset.pendingContentId;
+             delete modal.dataset.pendingContentType;
+        }
+
+        // --- Initialization ---
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log("DOM Content Loaded. Initializing Dashboard (v5)...");
+            loadSyllabusData();
+            renderSyllabus();
+
+            // Modal closing listeners
+            modalCloseBtn.addEventListener('click', closeModal);
+            modal.addEventListener('click', (event) => { if (event.target === modal) closeModal(); });
+            document.addEventListener('keydown', (event) => { if (event.key === 'Escape' && modal.style.display === 'block') closeModal(); });
+
+            console.log("HSC Biology Dashboard Initialized (v5).");
+        });
+
+    </script>
+
+</body>
+</html>
